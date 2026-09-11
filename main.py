@@ -557,40 +557,40 @@ def print_summary(results: list):
         for r in failed:
             print(f"  ✗ '{r.email_subject}': {r.error_message}")
 
-    def apply_env_overrides(config: dict) -> dict:
-        """
-        Nadpisuje wartości z config.json danymi ze zmiennych środowiskowych.
-        Odporna na puste ciągi znaków z GitHub Secrets.
-        """
-        def parse_int(val):
-            return int(val) if str(val).isdigit() else 993
+def apply_env_overrides(config: dict) -> dict:
+    """
+    Nadpisuje wartości z config.json danymi ze zmiennych środowiskowych.
+    Odporna na puste ciągi znaków z GitHub Secrets.
+    """
+    def parse_int(val):
+        return int(val) if str(val).isdigit() else 993
 
-        def parse_bool(val):
-            return str(val).lower() in ("true", "1", "yes")
+    def parse_bool(val):
+        return str(val).lower() in ("true", "1", "yes")
 
-        env_mapping = {
-            "EMAIL_IMAP_SERVER": ("email", "imap_server", str),
-            "EMAIL_IMAP_PORT":   ("email", "imap_port", parse_int),
-            "EMAIL_USERNAME":    ("email", "username", str),
-            "EMAIL_PASSWORD":    ("email", "password", str),
-            "EMAIL_USE_SSL":     ("email", "use_ssl", parse_bool),
-            "EMAIL_MAILBOX":     ("email", "mailbox", str),
-            "ASANA_TOKEN":       ("asana", "personal_access_token", str),
-        }
+    env_mapping = {
+        "EMAIL_IMAP_SERVER": ("email", "imap_server", str),
+        "EMAIL_IMAP_PORT":   ("email", "imap_port", parse_int),
+        "EMAIL_USERNAME":    ("email", "username", str),
+        "EMAIL_PASSWORD":    ("email", "password", str),
+        "EMAIL_USE_SSL":     ("email", "use_ssl", parse_bool),
+        "EMAIL_MAILBOX":     ("email", "mailbox", str),
+        "ASANA_TOKEN":       ("asana", "personal_access_token", str),
+    }
 
-        for env_var, (section, key, converter) in env_mapping.items():
-            value = os.environ.get(env_var)
-            # Bierzemy pod uwagę tylko wartości, które nie są puste
-            if value is not None and str(value).strip() != "":
-                if section not in config:
-                    config[section] = {}
-                try:
-                    config[section][key] = converter(value)
-                    logger.info(f"Nadpisano konfigurację z ENV: {section}.{key}")
-                except Exception as e:
-                    logger.warning(f"Błąd konwersji zmiennej ENV {env_var}: {e}")
+    for env_var, (section, key, converter) in env_mapping.items():
+        value = os.environ.get(env_var)
+        # Bierzemy pod uwagę tylko wartości, które nie są puste
+        if value is not None and str(value).strip() != "":
+            if section not in config:
+                config[section] = {}
+            try:
+                config[section][key] = converter(value)
+                logger.info(f"Nadpisano konfigurację z ENV: {section}.{key}")
+            except Exception as e:
+                logger.warning(f"Błąd konwersji zmiennej ENV {env_var}: {e}")
 
-        return config
+    return config
 
 def main():
     """Punkt wejścia programu."""
