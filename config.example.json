@@ -1,0 +1,13 @@
+{
+  "email": {
+    "imap_server": "xxx.nazwa.pl",
+    "imap_port": 993,
+    "username": "harmonogram@xxx.nazwa.pl",
+    "password": "TUTAJ_WPISZ_HASLO_LUB_APP_PASSWORD",
+    "use_ssl": true,
+    "mailbox": "INBOX"
+  },
+  "asana": {
+    "personal_access_token": "TWOJ_TOKEN_ASANA"
+  }
+}

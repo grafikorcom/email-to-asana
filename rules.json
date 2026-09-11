@@ -1,0 +1,40 @@
+{
+  "recipient_rules": [
+    {
+      "phrase": "Asana FK",
+      "project_gid": "1218341752795129",
+      "workspace_gid": "1218339955890036",
+      "description": "Projekt X - główny workspace"
+    },
+    {
+      "phrase": "Asana KP",
+      "project_gid": "1218341752966093",
+      "workspace_gid": "1218339955890036",
+      "description": "Support - główny workspace"
+    },
+    {
+      "phrase": "Asana EM",
+      "project_gid": "1218341474102194",
+      "workspace_gid": "1218339955890036",
+      "description": "Development - drugi workspace"
+    },
+    {
+      "phrase": "Asana Portal ON",
+      "project_gid": "1218380773180128",
+      "workspace_gid": "1218339955890036",
+      "description": "Marketing - drugi workspace"
+    }
+  ],
+  "section_rules": [
+    {
+      "tag": "{B}",
+      "section_name": "Błędy/problemy - w toku",
+      "description": "Sekcja zgłoszonych błędów"
+    },
+    {
+      "tag": "{Z}",
+      "section_name": "Zmiany - propozycje",
+      "description": "Sekcja propozycji zmian"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+name: Email to Asana
+
+on:
+  schedule:
+    # Co 5 minut (minimalny interwał w GitHub Actions)
+    - cron: '*/5 * * * *'
+  workflow_dispatch:  # Pozwala uruchomić ręcznie z przycisku
+
+jobs:
+  run-parser:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run email parser
+        env:
+          EMAIL_IMAP_SERVER: ${{ secrets.EMAIL_IMAP_SERVER }}
+          EMAIL_IMAP_PORT: ${{ secrets.EMAIL_IMAP_PORT }}
+          EMAIL_USERNAME: ${{ secrets.EMAIL_USERNAME }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_USE_SSL: ${{ secrets.EMAIL_USE_SSL }}
+          EMAIL_MAILBOX: ${{ secrets.EMAIL_MAILBOX }}
+          ASANA_TOKEN: ${{ secrets.ASANA_TOKEN }}
+        run: python main.py --rules rules.json

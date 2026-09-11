@@ -1,0 +1,18 @@
+# === DANE WRAŻLIWE — NIGDY NIE WRZUCAJ ===
+config.json
+
+# === Pliki Python ===
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# === Logi i pliki tymczasowe ===
+*.log
+run.log
+email_to_asana.log
+
+# === IDE ===
+.vscode/
+.idea/
