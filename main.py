@@ -209,7 +209,7 @@ def match_section_rule(
 
 # ===== Przetwarzanie e-mail -> zadanie Asana =====
 
-def build_task_description(email_msg: EmailMessage) -> str:
+def build_task_description(email_msg: EmailMessage, matched_tag: str = "") -> str:
     """
     Buduje opis zadania na podstawie wiadomości e-mail.
     Dodaje informację o nadawcy na początku opisu.
@@ -235,11 +235,14 @@ def build_task_description(email_msg: EmailMessage) -> str:
 
     # Treść wiadomości
     body = email_msg.get_body()
-    if body:
-        parts.append(body)
-    else:
-        parts.append("(brak treści)")
-
+      
+    # Jeśli przekazano znacznik (np. {B}), usuwamy jego pierwsze wystąpienie
+    if body and matched_tag:
+        # Usuwamy tag i ewentualne białe znaki (spacje, entery) na początku tekstu
+        body = body.replace(matched_tag, "", 1).strip()
+        
+    parts.append(body if body else "(brak treści)")
+    
     return "\n".join(parts)
 
 
@@ -295,13 +298,16 @@ def process_email_message(
     body = email_msg.get_body()
     section_rule = match_section_rule(body, rules.section_rules)
 
+    matched_tag = ""
+
     if section_rule:
         result.section_name = section_rule.section_name
+        matched_tag = section_rule.tag  # Zapamiętujemy znacznik (np. "{B}")    
 
     # --- KROK 3: Przygotowanie danych zadania ---
     task_name = email_msg.subject or "(Brak tematu)"
-    task_description = build_task_description(email_msg)
-
+    task_description = build_task_description(email_msg, matched_tag)
+    
     # --- KROK 3.5: Pobranie GID nadawcy w Asana (na podstawie adresu e-mail) ---
     assignee_gid = None
     if not dry_run:

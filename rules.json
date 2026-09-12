@@ -35,6 +35,11 @@
       "tag": "{Z}",
       "section_name": "Zmiany - propozycje",
       "description": "Sekcja propozycji zmian"
+    },
+    {
+      "tag": "{I}",
+      "section_name": "Inbox e-mail",
+      "description": "Skzynka odbiorcza"
     }
   ]
 }
