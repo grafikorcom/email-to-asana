@@ -7,7 +7,7 @@ Użycie:
     python main.py --config config.json --rules rules.json
     python main.py --dry-run  (tryb testowy bez tworzenia zadań)
 """
-
+import re
 import json
 import logging
 import argparse
@@ -195,7 +195,7 @@ def match_section_rule(
     first_chars_lower = first_chars.lower()  # Zmiana na małe litery
     
     for rule in rules:
-        if rule.tag in first_chars_lower:
+        if rule.tag.lower() in first_chars_lower:
             logger.info(
                 f"Dopasowano regułę sekcji: znaleziono '{rule.tag}' "
                 f"w pierwszych 20 znakach -> sekcja '{rule.section_name}'"
@@ -237,10 +237,10 @@ def build_task_description(email_msg: EmailMessage, matched_tag: str = "") -> st
     # Treść wiadomości
     body = email_msg.get_body()
       
-    # Jeśli przekazano znacznik (np. {B}), usuwamy jego pierwsze wystąpienie
+    # Bezpieczne usuwanie tagu bez względu na wielkość liter ({B}, {b}, itp.)   
     if body and matched_tag:
-        # Usuwamy tag i ewentualne białe znaki (spacje, entery) na początku tekstu
-        body = body.replace(matched_tag, "", 1).strip()
+        pattern = re.escape(matched_tag)  # zabezpiecza znaki specjalne, np. nawiasy {}
+        body = re.sub(pattern, "", body, count=1, flags=re.IGNORECASE).strip()        
         
     parts.append(body if body else "(brak treści)")
     
