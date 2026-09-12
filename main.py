@@ -181,7 +181,7 @@ def match_section_rule(
 ) -> Optional[SectionRule]:
     """
     Dopasowuje treść e-mail do reguły sekcji.
-    Sprawdza PIERWSZE 20 ZNAKÓW treści wiadomości.
+    Sprawdza PIERWSZE 20 ZNAKÓW treści wiadomości (BEZ WZGLĘDU NA WIELKOŚĆ LITER).
 
     Args:
         body: Pełna treść wiadomości
@@ -192,9 +192,10 @@ def match_section_rule(
     """
     # Sprawdzamy pierwsze 20 znaków
     first_chars = body[:20] if body else ""
-
+    first_chars_lower = first_chars.lower()  # Zmiana na małe litery
+    
     for rule in rules:
-        if rule.tag in first_chars:
+        if rule.tag in first_chars_lower:
             logger.info(
                 f"Dopasowano regułę sekcji: znaleziono '{rule.tag}' "
                 f"w pierwszych 20 znakach -> sekcja '{rule.section_name}'"
