@@ -4,26 +4,44 @@
       "phrase": "Asana FK",
       "project_gid": "1218341752795129",
       "workspace_gid": "1218339955890036",
-      "description": "Projekt X - główny workspace"
+      "description": "OrcomNET > FK"
     },
     {
       "phrase": "Asana KP",
       "project_gid": "1218341752966093",
       "workspace_gid": "1218339955890036",
-      "description": "Support - główny workspace"
+      "description": "OrcomNET > KP"
     },
     {
       "phrase": "Asana EM",
       "project_gid": "1218341474102194",
       "workspace_gid": "1218339955890036",
-      "description": "Development - drugi workspace"
+      "description": "OrcomNET > EM"
     },
     {
       "phrase": "Asana Portal ON",
       "project_gid": "1218380773180128",
       "workspace_gid": "1218339955890036",
-      "description": "Marketing - drugi workspace"
-    }
+      "description": "OrcomNET > Portal ON"
+    },
+    {
+      "phrase": "Asana SSK",
+      "project_gid": "1218386798624756",
+      "workspace_gid": "1218335634171861",
+      "description": "SSK > SSK"
+    },
+    {
+      "phrase": "Asana Portal SSK",
+      "project_gid": "1218386867567071",
+      "workspace_gid": "1218335634171861",
+      "description": "SSK > Portal SSK"
+    },
+    {
+      "phrase": "Asana Integra SSK",
+      "project_gid": "1218386916246320",
+      "workspace_gid": "1218335634171861",
+      "description": "SSK > Integra SSK"
+    } 
   ],
   "section_rules": [
     {
