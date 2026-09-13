@@ -8,7 +8,7 @@ concurrency:
 on:
   #schedule:
     # Co 5 minut (minimalny interwał w GitHub Actions)
-  #  - cron: '*/5 * * * *'
+  - cron: '*/5 * * * *'
   workflow_dispatch:  # Pozwala uruchomić ręcznie z przycisku
 
 jobs:
