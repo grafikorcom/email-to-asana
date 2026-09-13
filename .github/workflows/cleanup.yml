@@ -1,0 +1,23 @@
+name: Cleanup Old Workflow Runs
+
+on:
+  schedule:
+    # Uruchamiaj automatycznie codziennie o północy
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Pozwala uruchomić sprzątanie ręcznie w dowolnym momencie
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  delete-old-runs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Usuwanie starych uruchomień
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          retain_days: 1          # Zachowaj uruchomienia z ostatnich 24 godzin
+          keep_minimum_runs: 10   # Zawsze zostawiaj co najmniej 10 ostatnich uruchomień (na wszelki wypadek)
