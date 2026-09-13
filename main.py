@@ -30,6 +30,16 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Lista nadawców systemowych, z których maile mają być ZAWSZE ignorowane
+SYSTEM_IGNORE_SENDERS = [
+    "notifications@github.com",
+    "noreply@github.com",
+    "no-reply@accounts.google.com",
+    "mailer-daemon@",
+    "postmaster@",
+    "no-reply@",
+    "noreply@"
+]
 
 # ===== Struktury danych =====
 
@@ -139,8 +149,15 @@ def match_recipient_rule(
     rules: list
 ) -> Optional[RecipientRule]:
     """
+
+    """
+def match_recipient_rule(
+    recipients: list,
+    rules: list
+) -> Optional[RecipientRule]:
+    """
     Dopasowuje adresatów do reguł na podstawie NAZWY adresata.
-    Sprawdza, czy nazwa wyświetlana adresata zawiera podaną frazę z reguł.
+    Sprawdza, czy fraza z reguły znajduje się w nazwie LUB adresie e-mail odbiorcy (TO).
 
     Args:
         recipients: Lista słowników [{'name': '...', 'email': '...'}]
@@ -148,32 +165,32 @@ def match_recipient_rule(
 
     Returns:
         Dopasowana reguła lub None
+
     """
     for recipient in recipients:
-        display_name = recipient["name"]
-        email_addr = recipient["email"]
-        
-        # Jeżeli nazwa wyświetlana jest pusta (np. mail wysłany na sam adres),
-        # jako fallback bierzemy część przed '@' z adresu e-mail lub cały adres.
-        search_target = display_name if display_name else email_addr
-        search_target_lower = search_target.lower()
+        display_name = recipient.get("name", "").lower()
+        email_addr = recipient.get("email", "").lower()
 
         for rule in rules:
-            if rule.phrase in search_target_lower:
+            phrase = rule.phrase.strip().lower()
+            
+            # Zabezpieczenie: pusta fraza w rules.json jest ignorowana
+            if not phrase:
+                continue
+
+            # Sprawdzamy czy fraza znajduje się w nazwie lub adresie e-mail odbiorcy
+            if phrase in display_name or phrase in email_addr:
                 logger.info(
                     f"Dopasowano regułę adresata! "
-                    f"Nazwa: '{search_target}' zawiera frazę: '{rule.phrase}' -> "
-                    f"Projekt GID: {rule.project_gid}, Workspace GID: {rule.workspace_gid}"
+                    f"Fraza: '{rule.phrase}' znaleziona w odbiorcy: "
+                    f"'{recipient.get('name')}' <{recipient.get('email')}> -> "
+                    f"Projekt GID: {rule.project_gid}"
                 )
                 return rule
 
-    # Logowanie wszystkich sprawdzonych nazw w celu ułatwienia debugowania
-    checked_names = [r["name"] if r["name"] else r["email"] for r in recipients]
-    logger.info(
-        f"Brak dopasowania reguły dla nazw adresatów: {checked_names}"
-    )
+    checked_recipients = [f"'{r.get('name')}' <{r.get('email')}>" for r in recipients]
+    logger.info(f"Brak dopasowania reguły dla odbiorców: {checked_recipients}")
     return None
-
 
 def match_section_rule(
     body: str,
@@ -273,6 +290,13 @@ def process_email_message(
     Returns:
         Wynik tworzenia zadania
     """
+    # KROK 0: Ignorowanie e-maili systemowych i automatycznych powiadomień
+    sender_lower = email_msg.sender_email.lower()
+    for sys_sender in SYSTEM_IGNORE_SENDERS:
+        if sys_sender in sender_lower:
+            result.error_message = f"Pominięto powiadomienie systemowe od: {email_msg.sender_email}"
+            logger.info(result.error_message)
+            return result
     result = TaskCreationResult(
         success=False,
         email_subject=email_msg.subject,
